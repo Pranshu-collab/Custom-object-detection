@@ -1,5 +1,5 @@
-## Custom-object-detection
-# 1. Problem Definition and Motivation
+# Custom-object-detection
+## 1. Problem Definition and Motivation
 The goal of this project is to design and implement a fully custom object detection model. Unlike approaches that rely on pretrained backbones or off-the-shelf detectors (e.g., YOLO, SSD, Faster R-CNN), this work focuses on building every component from scratch, including:
 * A custom convolutional backbone
 * Feature hierarchy design
@@ -10,14 +10,14 @@ The goal of this project is to design and implement a fully custom object detect
 * Custom evaluation using mAP
 The motivation behind this design is to achieve full architectural control, enabling deep understanding, debugging, and adaptation for industrial deployment where pretrained models may not generalize well.
 
-# 2. Overall System Architecture 
+## 2. Overall System Architecture 
 The proposed system follows a single-stage detection pipeline consisting of three main components:
 * Custom CNN Backbone – for hierarchical feature extraction
 * Detection Head with Upsampling and Skip Fusion – for spatial refinement
 * Post-processing Pipeline – for converting raw predictions into final detections
 The model takes a fixed-size RGB image as input and produces a dense grid of predictions, where each grid cell independently predicts object presence, bounding box geometry, and class probabilities.
 
-# 3. Custom CNN Backbone Design
+## 3. Custom CNN Backbone Design
 3.1 Input Specification
 * Input shape: 224 × 224 × 3
 * RGB images normalized before inference
@@ -57,7 +57,7 @@ The backbone produces two outputs:
 * Skip feature map – higher spatial resolution, lower semantic depth
 This dual-output design enables multi-scale feature fusion without relying on pretrained feature pyramids.
 
-# 4. Detection Head Design
+## 4. Detection Head Design
 4.1 Motivation for Upsampling
 After multiple pooling operations, the deep feature map becomes too coarse for precise localization. To address this:
 An upsampling layer is applied to increase spatial resolution
@@ -91,7 +91,7 @@ Each grid cell predicts:
 This results in an output tensor of shape:
 28 × 28 × (5 + number_of_classes)
   
-# 5. Bounding Box Representation and Prediction Logic
+## 5. Bounding Box Representation and Prediction Logic
 * Each grid cell predicts bounding boxes using a center-based parameterization:
 * Center offsets are constrained using sigmoid activation
 * Width and height are predicted using exponential scaling
@@ -101,7 +101,7 @@ Why this formulation was chosen:
 * Ensures bounding boxes remain within image bounds
 * Makes predictions resolution-independent
 
-# 6. Post-Processing Pipeline
+## 6. Post-Processing Pipeline
 6.1 Decoding Predictions
 Raw network outputs are transformed into real-world bounding boxes by:
 * Applying activation functions
@@ -114,7 +114,7 @@ Since multiple grid cells may predict overlapping boxes:
 * Highest-confidence boxes are retained
 This step is essential for producing clean and interpretable detection outputs.
 
-# 7. Training Methodology
+## 7. Training Methodology
 7.1 Loss Function Structure
 The training objective combines:
 * Localization loss (bounding box regression)
@@ -130,7 +130,7 @@ Each component is weighted to balance:
 * Fixed batch size to maintain consistent gradient statistics
 * Training performed for multiple epochs with validation monitoring
 
-# 8. Evaluation Methodology
+## 8. Evaluation Methodology
 8.1 Intersection over Union (IoU)
 IoU is computed using normalized coordinates output by the decoder. This ensures consistency between predictions and ground-truth annotations.
 
@@ -143,5 +143,5 @@ Low initial mAP values were observed despite decreasing training loss, highlight
 * Learning objectness scores
 * Achieving stable localization early in training
 
-# References:
+## References:
 * https://www.kaggle.com/code/muthumeenalv/object-detection/notebook
